@@ -17,7 +17,7 @@ The bot declares and defines various helpers to make it easier for the would-be 
 
 
 # Java -> Python examples
-From recollection, most of you were more partial to Java than Python. In Jack's case I know this to be due to the differences in professors at uni. Even so, we'll be using Python. It makes much more sense for this than Java. If we were to use Java, it requires a large runtime to be mapped to the game's memory. Which doesn't make sense for something that we will be running up to 30,40,50 instances of at once. The JRE (Java Runtime Environment) alone, while optimized, would ask 750MB-1GB of memory per instance. That's shit.
+From recollection, most of you are more partial to Java than Python. In Jack's case I know this to be due to the differences in professors at uni. Even so, we'll be using Python. It makes much more sense. If we were to use Java, it requires a large runtime to be mapped to the game's memory. Which doesn't make sense for something that we will be running up to 30,40,50 instances of at once. The JRE (Java Runtime Environment) alone, while optimized, would ask 750MB-1GB of memory per instance. That's shit.
 
 That being said, since you're all (probably) more familiar with Java than you are Python, I'll write some Java examples then translate them to Python for you.
 
@@ -38,12 +38,12 @@ Python, basic **Hello, world**.
 print("Hello, world.")
 ```
 
-Java requires classes where Python does not. Java also requires strictly defined entry points where Python, again, does not. An entry point is simply the "main" function.
+Java requires classes where Python does not. Java also requires strictly defined entry points, where Python, again, does not. An entry point is simply the "main" function.
 
 In Java, it's 
 ```java
-public static void main(String[] args) {
-    System.out.println("Hello, world.");
+public static void main(String[] args) {    // This bit here being the entry point.
+    System.out.println("Hello, world.");    // This bit here being code that's ran in the entry point.
 }
 ```
 
@@ -100,11 +100,11 @@ Because our "Hello, world." is only printed within the entry point of `hello.py`
 
 
 # A brief refresher on OOP
-OOP, or Object Oriented Programming, is a framework of thinking when developing and designing software. It's, in practice, largely shit. OOP itself is not inherently bad by any means. Assuming all rules of OOP are followed, the resulting codebase should be fairly consumable. However, following every rule to a T is not easy, and the majority of software projects fail at doing so.
+OOP, or [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming), is a framework of thinking when developing and designing software. It's, in practice, largely shit. OOP itself is not inherently bad by any means. Assuming all rules of OOP are followed, the resulting codebase should be fairly consumable. However, following every rule to a T is not easy, and such a feat is rarely achieved.
 
-Rather than attempting to follow the rules to a T, which never happens in real-world scenarios, I prefer to "tread with caution". I use classes, I sometimes even *like* using classes, but I don't default to using classes.
+Rather than attempting to follow the rules to a T, which never happens in real-world scenarios, I prefer to "tread with caution". I use classes, I sometimes even *like* using classes, but I don't **__default__** to using classes.
 
-Java will have you believe that classes should be the default, the go-to. So much so it forces that on you. 
+Java will have you believe that classes should be the default, the go-to. So much so that classes are forced onto you. 
 
 Most languages don't give a shit.
 
