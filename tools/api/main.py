@@ -24,7 +24,7 @@ def parse_script_header(file: str) -> dict:
             if line.startswith("#") and any(substring in line for substring in tags):
                 key, value = line.split(": ")
                 header[key.replace("#", "").replace(" ", "")] = value.strip()
-    header["file"] = file.split("/")[-1]
+    header["File"] = file.split("/")[-1]
     return header
 
 
