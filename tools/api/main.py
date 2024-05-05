@@ -1,9 +1,11 @@
 from typing import Union
-
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import hashlib
 import os
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def get_files_in_directory(directory: str) -> list[str]:
@@ -43,3 +45,8 @@ def get_script(script: str):
     with open(f"scripts/{script}", "r") as f:
         return {"script": f.read()}
 
+
+@app.get("/module")
+def get_module_hash():
+    with open("static/COCKBOT.dll", "rb") as f:
+        return {"module": hashlib.md5(f.read()).hexdigest()}
