@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"crypto/md5"
+    "encoding/hex"
+    "io"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -20,8 +23,28 @@ type Script struct {
 	RevisionDate string `json:"RevisionDate"`
 }
 
+type ModuleInfo struct {
+	Module string `json:"module"`
+}
+
+func getMD5Hash(filePath string) (string, error) {
+    file, err := os.Open(filePath)
+    if err != nil {
+        return "", err
+    }
+    defer file.Close()
+
+    hash := md5.New()
+    if _, err := io.Copy(hash, file); err != nil {
+        return "", err
+    }
+
+    hashInBytes := hash.Sum(nil)[:16]
+    return hex.EncodeToString(hashInBytes), nil
+}
+
 func sendHTTPRequest() []Script {
-	resp, err := http.Get("https://ryswick.net/sdn/scripts/")
+	resp, err := http.Get("https://ryswick.net/scripts/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +61,6 @@ func sendHTTPRequest() []Script {
 	return data.Scripts
 }
 
-// Save the script with a filename of scriptFile to C:\ProgramData\Jagex\Launcher\cockbot\scripts
 func saveScriptToFile(scriptFile string, scriptContent string) error {
 	file, err := os.Create("C:\\ProgramData\\Jagex\\Launcher\\cockbot\\scripts\\" + scriptFile)
 	if err != nil {
@@ -54,8 +76,49 @@ func saveScriptToFile(scriptFile string, scriptContent string) error {
 	return nil
 }
 
+func downloadFile(filepath string, url string) error {
+    out, err := os.Create(filepath)
+    if err != nil {
+        return err
+    }
+    defer out.Close()
+
+    resp, err := http.Get(url)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+
+    _, err = io.Copy(out, resp.Body)
+    return err
+}
+
+func checkForModuleUpdate() {
+	resp, err := http.Get("https://ryswick.net/module/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	var data ModuleInfo
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	hash, err := getMD5Hash("COCKBOT.dll")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check if the module is different from the current one
+	if data.Module != hash {
+		downloadFile("COCKBOT.dll", "https://ryswick.net/static/COCKBOT.dll")
+	}
+}
+
 func downloadScript(scriptFile string) {
-	resp, err := http.Get("https://ryswick.net/sdn/scripts/" + scriptFile + "/")
+	resp, err := http.Get("https://ryswick.net/scripts/" + scriptFile + "/")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,7 +143,7 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Lennissa SDN Client")
 
-	w.Resize(fyne.NewSize(800, 600))
+	w.Resize(fyne.NewSize(600, 300))
 	data := sendHTTPRequest()
 
 	authorLabel := widget.NewLabel("")
@@ -117,6 +180,7 @@ func main() {
 	updateButton := widget.NewButton("Update", func() {
 		data = sendHTTPRequest()
 		selectList.Refresh()
+		checkForModuleUpdate();
 	})
 	updateButton.Resize(fyne.NewSize(updateButton.Size().Width, 150))
 
